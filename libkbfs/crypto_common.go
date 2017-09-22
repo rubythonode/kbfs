@@ -143,24 +143,6 @@ func (c CryptoCommon) MakeRandomTLFKeys() (kbfscrypto.TLFPublicKey,
 	return pubKey, privKey, cryptKey, nil
 }
 
-// MakeRandomTLFCryptKeyServerHalf implements the Crypto interface for
-// CryptoCommon.
-func (c CryptoCommon) MakeRandomTLFCryptKeyServerHalf() (
-	serverHalf kbfscrypto.TLFCryptKeyServerHalf, err error) {
-	return kbfscrypto.MakeRandomTLFCryptKeyServerHalf()
-}
-
-// EncryptTLFCryptKeyClientHalf implements the Crypto interface for
-// CryptoCommon.
-func (c CryptoCommon) EncryptTLFCryptKeyClientHalf(
-	privateKey kbfscrypto.TLFEphemeralPrivateKey,
-	publicKey kbfscrypto.CryptPublicKey,
-	clientHalf kbfscrypto.TLFCryptKeyClientHalf) (
-	encryptedClientHalf EncryptedTLFCryptKeyClientHalf, err error) {
-	return kbfscrypto.EncryptTLFCryptKeyClientHalf(
-		privateKey, publicKey, clientHalf)
-}
-
 // EncryptPrivateMetadata implements the Crypto interface for CryptoCommon.
 func (c CryptoCommon) EncryptPrivateMetadata(
 	pmd PrivateMetadata, key kbfscrypto.TLFCryptKey) (
@@ -295,14 +277,6 @@ func (c CryptoCommon) DecryptBlock(
 	return nil
 }
 
-// GetTLFCryptKeyServerHalfID implements the Crypto interface for CryptoCommon.
-func (c CryptoCommon) GetTLFCryptKeyServerHalfID(
-	user keybase1.UID, devicePubKey kbfscrypto.CryptPublicKey,
-	serverHalf kbfscrypto.TLFCryptKeyServerHalf) (
-	TLFCryptKeyServerHalfID, error) {
-	return kbfscrypto.MakeTLFCryptKeyServerHalfID(user, devicePubKey, serverHalf)
-}
-
 // VerifyTLFCryptKeyServerHalfID implements the Crypto interface for CryptoCommon.
 func (c CryptoCommon) VerifyTLFCryptKeyServerHalfID(
 	serverHalfID TLFCryptKeyServerHalfID,
@@ -360,18 +334,4 @@ func (c CryptoCommon) DecryptMerkleLeaf(encryptedLeaf EncryptedMerkleLeaf,
 		return nil, err
 	}
 	return &leaf, nil
-}
-
-// EncryptTLFCryptKeys implements the Crypto interface for CryptoCommon.
-func (c CryptoCommon) EncryptTLFCryptKeys(
-	oldKeys []kbfscrypto.TLFCryptKey, key kbfscrypto.TLFCryptKey) (
-	encryptedKeys EncryptedTLFCryptKeys, err error) {
-	return kbfscrypto.EncryptTLFCryptKeys(c.codec, oldKeys, key)
-}
-
-// DecryptTLFCryptKeys implements the Crypto interface for CryptoCommon.
-func (c CryptoCommon) DecryptTLFCryptKeys(
-	encKeys EncryptedTLFCryptKeys, key kbfscrypto.TLFCryptKey) (
-	[]kbfscrypto.TLFCryptKey, error) {
-	return kbfscrypto.DecryptTLFCryptKeys(c.codec, encKeys, key)
 }
