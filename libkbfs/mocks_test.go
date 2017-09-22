@@ -2230,16 +2230,16 @@ func (mr *MockKeyMetadataMockRecorder) StoresHistoricTLFCryptKeys() *gomock.Call
 }
 
 // GetHistoricTLFCryptKey mocks base method
-func (m *MockKeyMetadata) GetHistoricTLFCryptKey(c cryptoPure, keyGen KeyGen, currentKey kbfscrypto.TLFCryptKey) (kbfscrypto.TLFCryptKey, error) {
-	ret := m.ctrl.Call(m, "GetHistoricTLFCryptKey", c, keyGen, currentKey)
+func (m *MockKeyMetadata) GetHistoricTLFCryptKey(codec kbfscodec.Codec, keyGen KeyGen, currentKey kbfscrypto.TLFCryptKey) (kbfscrypto.TLFCryptKey, error) {
+	ret := m.ctrl.Call(m, "GetHistoricTLFCryptKey", codec, keyGen, currentKey)
 	ret0, _ := ret[0].(kbfscrypto.TLFCryptKey)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetHistoricTLFCryptKey indicates an expected call of GetHistoricTLFCryptKey
-func (mr *MockKeyMetadataMockRecorder) GetHistoricTLFCryptKey(c, keyGen, currentKey interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHistoricTLFCryptKey", reflect.TypeOf((*MockKeyMetadata)(nil).GetHistoricTLFCryptKey), c, keyGen, currentKey)
+func (mr *MockKeyMetadataMockRecorder) GetHistoricTLFCryptKey(codec, keyGen, currentKey interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHistoricTLFCryptKey", reflect.TypeOf((*MockKeyMetadata)(nil).GetHistoricTLFCryptKey), codec, keyGen, currentKey)
 }
 
 // MockencryptionKeyGetter is a mock of encryptionKeyGetter interface
@@ -3389,32 +3389,6 @@ func (mr *MockcryptoPureMockRecorder) DecryptMerkleLeaf(encryptedLeaf, privKey, 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DecryptMerkleLeaf", reflect.TypeOf((*MockcryptoPure)(nil).DecryptMerkleLeaf), encryptedLeaf, privKey, nonce, ePubKey)
 }
 
-// MakeTLFWriterKeyBundleID mocks base method
-func (m *MockcryptoPure) MakeTLFWriterKeyBundleID(wkb TLFWriterKeyBundleV3) (TLFWriterKeyBundleID, error) {
-	ret := m.ctrl.Call(m, "MakeTLFWriterKeyBundleID", wkb)
-	ret0, _ := ret[0].(TLFWriterKeyBundleID)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// MakeTLFWriterKeyBundleID indicates an expected call of MakeTLFWriterKeyBundleID
-func (mr *MockcryptoPureMockRecorder) MakeTLFWriterKeyBundleID(wkb interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MakeTLFWriterKeyBundleID", reflect.TypeOf((*MockcryptoPure)(nil).MakeTLFWriterKeyBundleID), wkb)
-}
-
-// MakeTLFReaderKeyBundleID mocks base method
-func (m *MockcryptoPure) MakeTLFReaderKeyBundleID(rkb TLFReaderKeyBundleV3) (TLFReaderKeyBundleID, error) {
-	ret := m.ctrl.Call(m, "MakeTLFReaderKeyBundleID", rkb)
-	ret0, _ := ret[0].(TLFReaderKeyBundleID)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// MakeTLFReaderKeyBundleID indicates an expected call of MakeTLFReaderKeyBundleID
-func (mr *MockcryptoPureMockRecorder) MakeTLFReaderKeyBundleID(rkb interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MakeTLFReaderKeyBundleID", reflect.TypeOf((*MockcryptoPure)(nil).MakeTLFReaderKeyBundleID), rkb)
-}
-
 // MockCrypto is a mock of Crypto interface
 type MockCrypto struct {
 	ctrl     *gomock.Controller
@@ -3633,32 +3607,6 @@ func (m *MockCrypto) DecryptMerkleLeaf(encryptedLeaf EncryptedMerkleLeaf, privKe
 // DecryptMerkleLeaf indicates an expected call of DecryptMerkleLeaf
 func (mr *MockCryptoMockRecorder) DecryptMerkleLeaf(encryptedLeaf, privKey, nonce, ePubKey interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DecryptMerkleLeaf", reflect.TypeOf((*MockCrypto)(nil).DecryptMerkleLeaf), encryptedLeaf, privKey, nonce, ePubKey)
-}
-
-// MakeTLFWriterKeyBundleID mocks base method
-func (m *MockCrypto) MakeTLFWriterKeyBundleID(wkb TLFWriterKeyBundleV3) (TLFWriterKeyBundleID, error) {
-	ret := m.ctrl.Call(m, "MakeTLFWriterKeyBundleID", wkb)
-	ret0, _ := ret[0].(TLFWriterKeyBundleID)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// MakeTLFWriterKeyBundleID indicates an expected call of MakeTLFWriterKeyBundleID
-func (mr *MockCryptoMockRecorder) MakeTLFWriterKeyBundleID(wkb interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MakeTLFWriterKeyBundleID", reflect.TypeOf((*MockCrypto)(nil).MakeTLFWriterKeyBundleID), wkb)
-}
-
-// MakeTLFReaderKeyBundleID mocks base method
-func (m *MockCrypto) MakeTLFReaderKeyBundleID(rkb TLFReaderKeyBundleV3) (TLFReaderKeyBundleID, error) {
-	ret := m.ctrl.Call(m, "MakeTLFReaderKeyBundleID", rkb)
-	ret0, _ := ret[0].(TLFReaderKeyBundleID)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// MakeTLFReaderKeyBundleID indicates an expected call of MakeTLFReaderKeyBundleID
-func (mr *MockCryptoMockRecorder) MakeTLFReaderKeyBundleID(rkb interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MakeTLFReaderKeyBundleID", reflect.TypeOf((*MockCrypto)(nil).MakeTLFReaderKeyBundleID), rkb)
 }
 
 // Sign mocks base method
@@ -7338,16 +7286,16 @@ func (mr *MockBareRootMetadataMockRecorder) StoresHistoricTLFCryptKeys() *gomock
 }
 
 // GetHistoricTLFCryptKey mocks base method
-func (m *MockBareRootMetadata) GetHistoricTLFCryptKey(c cryptoPure, keyGen KeyGen, currentKey kbfscrypto.TLFCryptKey, extra ExtraMetadata) (kbfscrypto.TLFCryptKey, error) {
-	ret := m.ctrl.Call(m, "GetHistoricTLFCryptKey", c, keyGen, currentKey, extra)
+func (m *MockBareRootMetadata) GetHistoricTLFCryptKey(codec kbfscodec.Codec, keyGen KeyGen, currentKey kbfscrypto.TLFCryptKey, extra ExtraMetadata) (kbfscrypto.TLFCryptKey, error) {
+	ret := m.ctrl.Call(m, "GetHistoricTLFCryptKey", codec, keyGen, currentKey, extra)
 	ret0, _ := ret[0].(kbfscrypto.TLFCryptKey)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetHistoricTLFCryptKey indicates an expected call of GetHistoricTLFCryptKey
-func (mr *MockBareRootMetadataMockRecorder) GetHistoricTLFCryptKey(c, keyGen, currentKey, extra interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHistoricTLFCryptKey", reflect.TypeOf((*MockBareRootMetadata)(nil).GetHistoricTLFCryptKey), c, keyGen, currentKey, extra)
+func (mr *MockBareRootMetadataMockRecorder) GetHistoricTLFCryptKey(codec, keyGen, currentKey, extra interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHistoricTLFCryptKey", reflect.TypeOf((*MockBareRootMetadata)(nil).GetHistoricTLFCryptKey), codec, keyGen, currentKey, extra)
 }
 
 // MockMutableBareRootMetadata is a mock of MutableBareRootMetadata interface
@@ -7870,16 +7818,16 @@ func (mr *MockMutableBareRootMetadataMockRecorder) StoresHistoricTLFCryptKeys() 
 }
 
 // GetHistoricTLFCryptKey mocks base method
-func (m *MockMutableBareRootMetadata) GetHistoricTLFCryptKey(c cryptoPure, keyGen KeyGen, currentKey kbfscrypto.TLFCryptKey, extra ExtraMetadata) (kbfscrypto.TLFCryptKey, error) {
-	ret := m.ctrl.Call(m, "GetHistoricTLFCryptKey", c, keyGen, currentKey, extra)
+func (m *MockMutableBareRootMetadata) GetHistoricTLFCryptKey(codec kbfscodec.Codec, keyGen KeyGen, currentKey kbfscrypto.TLFCryptKey, extra ExtraMetadata) (kbfscrypto.TLFCryptKey, error) {
+	ret := m.ctrl.Call(m, "GetHistoricTLFCryptKey", codec, keyGen, currentKey, extra)
 	ret0, _ := ret[0].(kbfscrypto.TLFCryptKey)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetHistoricTLFCryptKey indicates an expected call of GetHistoricTLFCryptKey
-func (mr *MockMutableBareRootMetadataMockRecorder) GetHistoricTLFCryptKey(c, keyGen, currentKey, extra interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHistoricTLFCryptKey", reflect.TypeOf((*MockMutableBareRootMetadata)(nil).GetHistoricTLFCryptKey), c, keyGen, currentKey, extra)
+func (mr *MockMutableBareRootMetadataMockRecorder) GetHistoricTLFCryptKey(codec, keyGen, currentKey, extra interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetHistoricTLFCryptKey", reflect.TypeOf((*MockMutableBareRootMetadata)(nil).GetHistoricTLFCryptKey), codec, keyGen, currentKey, extra)
 }
 
 // SetRefBytes mocks base method
