@@ -2190,8 +2190,7 @@ type MutableBareRootMetadata interface {
 	//
 	// Note that the TLFPrivateKey corresponding to privKey must
 	// also be stored in PrivateMetadata.
-	AddKeyGeneration(codec kbfscodec.Codec, crypto cryptoPure,
-		currExtra ExtraMetadata,
+	AddKeyGeneration(codec kbfscodec.Codec, currExtra ExtraMetadata,
 		updatedWriterKeys, updatedReaderKeys UserDevicePublicKeys,
 		ePubKey kbfscrypto.TLFEphemeralPublicKey,
 		ePrivKey kbfscrypto.TLFEphemeralPrivateKey,
@@ -2223,7 +2222,7 @@ type MutableBareRootMetadata interface {
 	// An array of server halves to push to the server are
 	// returned, with each entry corresponding to each key
 	// generation in KeyGenerationsToUpdate(), in ascending order.
-	UpdateKeyBundles(crypto cryptoPure, extra ExtraMetadata,
+	UpdateKeyBundles(codec kbfscodec.Codec, extra ExtraMetadata,
 		updatedWriterKeys, updatedReaderKeys UserDevicePublicKeys,
 		ePubKey kbfscrypto.TLFEphemeralPublicKey,
 		ePrivKey kbfscrypto.TLFEphemeralPrivateKey,
