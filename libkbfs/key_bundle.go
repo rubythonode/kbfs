@@ -1,253 +1,73 @@
-// Copyright 2016 Keybase Inc. All rights reserved.
+// Copyright 2017 Keybase Inc. All rights reserved.
 // Use of this source code is governed by a BSD
 // license that can be found in the LICENSE file.
 
 package libkbfs
 
 import (
-	"fmt"
-
-	"github.com/keybase/client/go/protocol/keybase1"
-	"github.com/keybase/go-codec/codec"
 	"github.com/keybase/kbfs/kbfscrypto"
+	"github.com/keybase/kbfs/kbfsmd"
 )
 
 // TLFCryptKeyServerHalfID is a temporary alias.
 type TLFCryptKeyServerHalfID = kbfscrypto.TLFCryptKeyServerHalfID
 
-// TLFCryptKeyInfo is a per-device key half entry in the
-// TLF{Writer,Reader}KeyBundleV{2,3}.
-type TLFCryptKeyInfo struct {
-	ClientHalf   EncryptedTLFCryptKeyClientHalf
-	ServerHalfID TLFCryptKeyServerHalfID
-	EPubKeyIndex int `codec:"i,omitempty"`
+// TLFCryptKeyInfo is a temporary alias.
+type TLFCryptKeyInfo = kbfsmd.TLFCryptKeyInfo
 
-	codec.UnknownFieldSetHandler
-}
+// DevicePublicKeys is a temporary alias.
+type DevicePublicKeys = kbfsmd.DevicePublicKeys
 
-// DevicePublicKeys is a set of a user's devices (identified by the
-// corresponding device CryptPublicKey).
-type DevicePublicKeys map[kbfscrypto.CryptPublicKey]bool
+// UserDevicePublicKeys is a temporary alias.
+type UserDevicePublicKeys = kbfsmd.UserDevicePublicKeys
 
-// Equals returns whether both sets of keys are equal.
-func (dpk DevicePublicKeys) Equals(other DevicePublicKeys) bool {
-	if len(dpk) != len(other) {
-		return false
-	}
+// DeviceKeyServerHalves is a temporary alias.
+type DeviceKeyServerHalves = kbfsmd.DeviceKeyServerHalves
 
-	for k := range dpk {
-		if !other[k] {
-			return false
-		}
-	}
+// UserDeviceKeyServerHalves is a temporary alias.
+type UserDeviceKeyServerHalves = kbfsmd.UserDeviceKeyServerHalves
 
-	return true
-}
+// DeviceServerHalfRemovalInfo is a temporary alias.
+type DeviceServerHalfRemovalInfo = kbfsmd.DeviceServerHalfRemovalInfo
 
-// UserDevicePublicKeys is a map from users to that user's set of devices.
-type UserDevicePublicKeys map[keybase1.UID]DevicePublicKeys
+// UserServerHalfRemovalInfo is a temporary alias.
+type UserServerHalfRemovalInfo = kbfsmd.UserServerHalfRemovalInfo
 
-// removeKeylessUsersForTest returns a new UserDevicePublicKeys objects with
-// all the users with an empty DevicePublicKeys removed.
-func (udpk UserDevicePublicKeys) removeKeylessUsersForTest() UserDevicePublicKeys {
-	udpkRemoved := make(UserDevicePublicKeys)
-	for u, dpk := range udpk {
-		if len(dpk) > 0 {
-			udpkRemoved[u] = dpk
-		}
-	}
-	return udpkRemoved
-}
+// ServerHalfRemovalInfo is a temporary alias.
+type ServerHalfRemovalInfo = kbfsmd.ServerHalfRemovalInfo
 
-// Equals returns whether both sets of users are equal, and they all
-// have corresponding equal sets of keys.
-func (udpk UserDevicePublicKeys) Equals(other UserDevicePublicKeys) bool {
-	if len(udpk) != len(other) {
-		return false
-	}
+// DeviceKeyInfoMapV2 is a temporary alias.
+type DeviceKeyInfoMapV2 = kbfsmd.DeviceKeyInfoMapV2
 
-	for u, dpk := range udpk {
-		if !dpk.Equals(other[u]) {
-			return false
-		}
-	}
+// UserDeviceKeyInfoMapV2 is a temporary alias.
+type UserDeviceKeyInfoMapV2 = kbfsmd.UserDeviceKeyInfoMapV2
 
-	return true
-}
+// TLFWriterKeyGenerationsV2 is a temporary alias.
+type TLFWriterKeyGenerationsV2 = kbfsmd.TLFWriterKeyGenerationsV2
 
-// DeviceKeyServerHalves is a map from a user devices (identified by the
-// corresponding device CryptPublicKey) to corresponding key server
-// halves.
-type DeviceKeyServerHalves map[kbfscrypto.CryptPublicKey]kbfscrypto.TLFCryptKeyServerHalf
+// TLFWriterKeyBundleV2 is a temporary alias.
+type TLFWriterKeyBundleV2 = kbfsmd.TLFWriterKeyBundleV2
 
-// UserDeviceKeyServerHalves maps a user's keybase UID to their
-// DeviceServerHalves map.
-type UserDeviceKeyServerHalves map[keybase1.UID]DeviceKeyServerHalves
+// TLFReaderKeyBundleV2 is a temporary alias.
+type TLFReaderKeyBundleV2 = kbfsmd.TLFReaderKeyBundleV2
 
-// mergeUsers returns a UserDeviceKeyServerHalves that contains all
-// the users in serverHalves and other, which must be disjoint. This
-// isn't a deep copy.
-func (serverHalves UserDeviceKeyServerHalves) mergeUsers(
-	other UserDeviceKeyServerHalves) (UserDeviceKeyServerHalves, error) {
-	merged := make(UserDeviceKeyServerHalves,
-		len(serverHalves)+len(other))
-	for uid, deviceServerHalves := range serverHalves {
-		merged[uid] = deviceServerHalves
-	}
-	for uid, deviceServerHalves := range other {
-		if _, ok := merged[uid]; ok {
-			return nil, fmt.Errorf(
-				"user %s is in both UserDeviceKeyServerHalves",
-				uid)
-		}
-		merged[uid] = deviceServerHalves
-	}
-	return merged, nil
-}
+// TLFReaderKeyGenerationsV2 is a temporary alias.
+type TLFReaderKeyGenerationsV2 = kbfsmd.TLFReaderKeyGenerationsV2
 
-// splitTLFCryptKey splits the given TLFCryptKey into two parts -- the
-// client-side part (which is encrypted with the given keys), and the
-// server-side part, which will be uploaded to the server.
-func splitTLFCryptKey(uid keybase1.UID,
-	tlfCryptKey kbfscrypto.TLFCryptKey,
-	ePrivKey kbfscrypto.TLFEphemeralPrivateKey, ePubIndex int,
-	pubKey kbfscrypto.CryptPublicKey) (
-	TLFCryptKeyInfo, kbfscrypto.TLFCryptKeyServerHalf, error) {
-	//    * create a new random server half
-	//    * mask it with the key to get the client half
-	//    * encrypt the client half
-	var serverHalf kbfscrypto.TLFCryptKeyServerHalf
-	serverHalf, err := kbfscrypto.MakeRandomTLFCryptKeyServerHalf()
-	if err != nil {
-		return TLFCryptKeyInfo{}, kbfscrypto.TLFCryptKeyServerHalf{}, err
-	}
+// DeviceKeyInfoMapV3 is a temporary alias.
+type DeviceKeyInfoMapV3 = kbfsmd.DeviceKeyInfoMapV3
 
-	clientHalf := kbfscrypto.MaskTLFCryptKey(serverHalf, tlfCryptKey)
+// UserDeviceKeyInfoMapV3 is a temporary alias.
+type UserDeviceKeyInfoMapV3 = kbfsmd.UserDeviceKeyInfoMapV3
 
-	var encryptedClientHalf EncryptedTLFCryptKeyClientHalf
-	encryptedClientHalf, err =
-		kbfscrypto.EncryptTLFCryptKeyClientHalf(ePrivKey, pubKey, clientHalf)
-	if err != nil {
-		return TLFCryptKeyInfo{}, kbfscrypto.TLFCryptKeyServerHalf{}, err
-	}
+// TLFWriterKeyBundleV3 is a temporary alias.
+type TLFWriterKeyBundleV3 = kbfsmd.TLFWriterKeyBundleV3
 
-	var serverHalfID TLFCryptKeyServerHalfID
-	serverHalfID, err =
-		kbfscrypto.MakeTLFCryptKeyServerHalfID(uid, pubKey, serverHalf)
-	if err != nil {
-		return TLFCryptKeyInfo{}, kbfscrypto.TLFCryptKeyServerHalf{}, err
-	}
+// TLFWriterKeyBundleID is a temporary alias.
+type TLFWriterKeyBundleID = kbfsmd.TLFWriterKeyBundleID
 
-	clientInfo := TLFCryptKeyInfo{
-		ClientHalf:   encryptedClientHalf,
-		ServerHalfID: serverHalfID,
-		EPubKeyIndex: ePubIndex,
-	}
-	return clientInfo, serverHalf, nil
-}
+// TLFReaderKeyBundleV3 is a temporary alias.
+type TLFReaderKeyBundleV3 = kbfsmd.TLFReaderKeyBundleV3
 
-type deviceServerHalfRemovalInfo map[kbfscrypto.CryptPublicKey][]TLFCryptKeyServerHalfID
-
-// userServerHalfRemovalInfo contains a map from devices (identified
-// by its crypt public key) to a list of IDs for key server halves to
-// remove (one per key generation). For logging purposes, it also
-// contains a bool indicating whether all of the user's devices were
-// removed.
-type userServerHalfRemovalInfo struct {
-	userRemoved         bool
-	deviceServerHalfIDs deviceServerHalfRemovalInfo
-}
-
-// addGeneration merges the keys in genInfo (which must be one per
-// device) into ri. genInfo must have the same userRemoved value and
-// keys as ri.
-func (ri userServerHalfRemovalInfo) addGeneration(
-	uid keybase1.UID, genInfo userServerHalfRemovalInfo) error {
-	if ri.userRemoved != genInfo.userRemoved {
-		return fmt.Errorf(
-			"userRemoved=%t != generation userRemoved=%t for user %s",
-			ri.userRemoved, genInfo.userRemoved, uid)
-	}
-
-	if len(ri.deviceServerHalfIDs) != len(genInfo.deviceServerHalfIDs) {
-		return fmt.Errorf(
-			"device count=%d != generation device count=%d for user %s",
-			len(ri.deviceServerHalfIDs),
-			len(genInfo.deviceServerHalfIDs), uid)
-	}
-
-	idCount := -1
-	for key, serverHalfIDs := range genInfo.deviceServerHalfIDs {
-		if idCount == -1 {
-			idCount = len(ri.deviceServerHalfIDs[key])
-		} else {
-			localIDCount := len(ri.deviceServerHalfIDs[key])
-			if localIDCount != idCount {
-				return fmt.Errorf(
-					"expected %d keys, got %d for user %s and device %s",
-					idCount, localIDCount, uid, key)
-			}
-		}
-
-		if len(serverHalfIDs) != 1 {
-			return fmt.Errorf(
-				"expected exactly one key, got %d for user %s and device %s",
-				len(serverHalfIDs), uid, key)
-		}
-		if _, ok := ri.deviceServerHalfIDs[key]; !ok {
-			return fmt.Errorf(
-				"no generation info for user %s and device %s",
-				uid, key)
-		}
-		ri.deviceServerHalfIDs[key] = append(
-			ri.deviceServerHalfIDs[key], serverHalfIDs[0])
-	}
-
-	return nil
-}
-
-// ServerHalfRemovalInfo is a map from users and devices to a list of
-// server half IDs to remove from the server.
-type ServerHalfRemovalInfo map[keybase1.UID]userServerHalfRemovalInfo
-
-// addGeneration merges the keys in genInfo (which must be one per
-// device) into info. genInfo must have the same users as info.
-func (info ServerHalfRemovalInfo) addGeneration(
-	genInfo ServerHalfRemovalInfo) error {
-	if len(info) != len(genInfo) {
-		return fmt.Errorf(
-			"user count=%d != generation user count=%d",
-			len(info), len(genInfo))
-	}
-
-	for uid, removalInfo := range genInfo {
-		if _, ok := info[uid]; !ok {
-			return fmt.Errorf("no generation info for user %s", uid)
-		}
-		err := info[uid].addGeneration(uid, removalInfo)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-// mergeUsers returns a ServerHalfRemovalInfo that contains all the
-// users in info and other, which must be disjoint. This isn't a deep
-// copy.
-func (info ServerHalfRemovalInfo) mergeUsers(
-	other ServerHalfRemovalInfo) (ServerHalfRemovalInfo, error) {
-	merged := make(ServerHalfRemovalInfo, len(info)+len(other))
-	for uid, removalInfo := range info {
-		merged[uid] = removalInfo
-	}
-	for uid, removalInfo := range other {
-		if _, ok := merged[uid]; ok {
-			return nil, fmt.Errorf(
-				"user %s is in both ServerHalfRemovalInfos",
-				uid)
-		}
-		merged[uid] = removalInfo
-	}
-	return merged, nil
-}
+// TLFReaderKeyBundleID is a temporary alias.
+type TLFReaderKeyBundleID = kbfsmd.TLFReaderKeyBundleID
